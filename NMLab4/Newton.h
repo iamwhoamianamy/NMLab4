@@ -1,4 +1,7 @@
 #pragma once
+#include <stdlib.h>
+#include <algorithm>
+#include <numeric>
 #include "Tests.h"
 
 typedef double real;
@@ -7,7 +10,7 @@ using namespace std;
 class Newton
 {
 public:
-   Test2_1 test;
+   Test2_2 test;
 
    int max_iter_k;
    int max_iter_v;
@@ -21,7 +24,7 @@ public:
    vector<real> xk1;
    vector<real> dxk;
 
-   Newton(Test2_1 _test)
+   Newton(Test2_2 _test)
    {
       test = _test;
       A.resize(test.n_func());
@@ -73,14 +76,53 @@ public:
       res = test.Fk(xs);
    }
 
-   void find_mins(vector<real>& vec, vector<real>& indices, int n)
+   vector<int> best_indices(vector<real>& vec, const int& n)
    {
-      int added = 0;
+      vector<int> indices(vec.size());
+      iota(indices.begin(), indices.end(), 0);
+
+      partial_sort(indices.begin(), indices.begin() + n, indices.end(),
+         [&vec](int i, int j) {return abs(vec[i]) < abs(vec[j]); });
+
+      return vector<int>(indices.begin(), indices.begin() + n);
+   }
+
+   vector<int>worst_indices(vector<real>& vec, const int& n)
+   {
+      vector<int> indices(vec.size());
+      iota(indices.begin(), indices.end(), 0);
+
+      partial_sort(indices.begin(), indices.begin() + n, indices.end(),
+         [&vec](int i, int j) {return abs(vec[i]) > abs(vec[j]); });
+
+      return vector<int>(indices.begin(), indices.begin() + n);
+   }
+
+   void build_jacobi_1(vector<real>& xs)
+   {
+      A = test.Jacobi(xs);
+
+      get_Fk(xs, Fk);
+
+      for(int i = 0; i < test.n_func(); i++)
+         A[i].push_back(-Fk[i]);
+
+      vector<real> max_abs(test.n_var() + 1);
+
       for(int i = 0; i < test.n_func(); i++)
       {
-
+         max_abs[i] = 0;
+         for(int j = 0; j < test.n_var(); j++)
+            if(abs(A[i][j]) > abs(max_abs[i]))
+               max_abs[i] = abs(A[i][j]);
       }
 
+      vector<int> indexes = worst_indices(max_abs, test.n_func() - test.n_var());
+
+      sort(indexes.begin(), indexes.end());
+
+      for(int i = indexes.size() - 1; i >= 0; i--)
+         A.erase(A.begin() + indexes[i]);
    }
 
    void build_jacobi_2(vector<real>& xs)
@@ -92,13 +134,12 @@ public:
       for(int i = 0; i < test.n_func(); i++)
          A[i].push_back(- Fk[i]);
 
-      int min_index = 0;
+      vector<int> indexes = best_indices(Fk, test.n_func() - test.n_var());
 
-      for(int i = 0; i < test.n_func(); i++)
-         if(abs(A[i][test.n_var() - 1]) < abs(A[min_index][test.n_var() - 1]))
-            min_index = i;
+      sort(indexes.begin(), indexes.end());
 
-      A.erase(A.begin() + min_index);
+      for(int i = indexes.size() - 1; i >= 0; i--)
+         A.erase(A.begin() + indexes[i]);
    }
 
    void forward_gauss(vector<vector<real>>& mat)
@@ -157,11 +198,29 @@ public:
       }
    }
 
-   void solve()
+   void solve(int var)
    {
       for(int k = 0; k < max_iter_k && norm(Fk) / norm_F0 > eps2; k++)
       {
-         build_jacobi_2(xk);
+         switch(var)
+         {
+         case 1:
+         {
+            build_jacobi_1(xk);
+            break;
+         }
+         case 2:
+         {
+            build_jacobi_2(xk);
+            break;
+         }
+         case 6:
+         {
+            build_jacobi_2(xk);
+            break;
+         }
+         }
+
          forward_gauss(A);
          backward_gauss(A, dxk);
 

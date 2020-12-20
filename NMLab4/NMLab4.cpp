@@ -17,10 +17,10 @@ int main()
    //ns.forward_gauss(A);
    //ns.backward_gauss(A, res);
 
-   Test2_1 test;
+   Test2_2 test;
    Newton newtonSolver = Newton(test);
    newtonSolver.read_info("tests/info1.txt");
-   newtonSolver.solve();
+   newtonSolver.solve(1);
    
    cout << newtonSolver.xk[0] << " " << newtonSolver.xk[1] << endl;
 
