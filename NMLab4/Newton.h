@@ -11,7 +11,7 @@ using namespace std;
 class Newton
 {
 public:
-   Test2_2 test;                      // Информация о СНУ
+   Test1_3 test;                      // Информация о СНУ
 
    int max_iter_k;                    // Максимальное число итераций цикла k
    int max_iter_v;                    // Максимальное число итераций цикла v
@@ -30,7 +30,7 @@ public:
                                       // на k-той итерации
 
    // Решаем систему, описанную уравнениями, заданными соответствующими тестами
-   Newton(Test2_2 _test)
+   Newton(Test1_3 _test)
    {
       test = _test;
       A.resize(test.n_func());
@@ -248,8 +248,12 @@ public:
    }
 
    // Функция решения СНУ
-   void solve(int var)
+   void solve(int var, string file_name)
    {
+      ofstream fout;
+      fout.open(file_name);
+      fout << "k\tbeta\tx\ty\tnorm" << endl;
+
       for(int k = 0; k < max_iter_k && norm(Fk) / norm_F0 > eps2; k++)
       {
          switch(var)
@@ -295,9 +299,10 @@ public:
          }
          xk = xk1;
 
-         // Блок вывода информации о текущей итерации в консоль
+         // Блок вывода информации о текущей итерации в консоль(для двумерного случая)
+         
 
-         cout << k << "\t" << beta << "\t" << xk[0] << "\t" << xk[1] << "\t" << norm(Fk) << endl;
+         fout << k << "\t" << beta << "\t" << xk[0] << "\t" << xk[1] << "\t" << norm(Fk) << endl;
 
          /*cout << "k:       " << setw(5) << k << endl;
          cout << "beta:    " << setw(5) << beta << endl;
@@ -307,5 +312,6 @@ public:
          cout << endl;
          cout << "norm Fk: " << setw(5) << norm(Fk) << endl << endl;*/
       }
+      fout.close();
    }
 };
