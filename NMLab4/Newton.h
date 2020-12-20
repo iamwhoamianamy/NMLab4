@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <numeric>
 #include "Tests.h"
+#include "Vector.h"
 
 typedef double real;
 using namespace std;
@@ -10,20 +11,25 @@ using namespace std;
 class Newton
 {
 public:
-   Test2_2 test;
+   Test2_2 test;                      // Информация о СНУ
 
-   int max_iter_k;
-   int max_iter_v;
-   real eps1, eps2;
-   real norm_F0;
+   int max_iter_k;                    // Максимальное число итераций цикла k
+   int max_iter_v;                    // Максимальное число итераций цикла v
+   real eps0 = 1e-3;                  // Шаг для численного вычисления производной
+   real eps1;                         // Условие малости для выхода из цикла v
+   real eps2;                         // Условие малости для выхода из цикла k
+   real norm_F0;                      // Норма вектор-функции F при x=x0
 
-   vector<vector<real>> A;
-   vector<real> Fk;
-   vector<real> Fvk;
-   vector<real> xk;
-   vector<real> xk1;
-   vector<real> dxk;
+   vector<vector<real>> A;            // Матрица Якоби
+   vector<real> Fk;                   // Значение вектор-функции F при x=xk
+   vector<real> Fvk;                  // Значение вектор-функции F при x=xk
+                                      // на v-той итерации
+   vector<real> xk;                   // Вектор x на k-той итерации
+   vector<real> xk1;                  // Вектор x на k+1-той итерации
+   vector<real> dxk;                  // Вектор направления поиска решения
+                                      // на k-той итерации
 
+   // Решаем систему, описанную уравнениями, заданными соответствующими тестами
    Newton(Test2_2 _test)
    {
       test = _test;
@@ -42,6 +48,7 @@ public:
 
    Newton() {};
 
+   // Считываем необходимую для решения информацию из файла file_name
    void read_info(string file_name)
    {
       ifstream fin;
@@ -71,11 +78,13 @@ public:
       fin.close();
    }
 
+   // Получаем значение вектор-функции F при x=xk
    void get_Fk(vector<real>& xs, vector<real>& res)
    {
       res = test.Fk(xs);
    }
 
+   // Получаем индексы наибольших элементов матрицы Якоби на удаление
    vector<int> best_indices(vector<real>& vec, const int& n)
    {
       vector<int> indices(vec.size());
@@ -87,7 +96,8 @@ public:
       return vector<int>(indices.begin(), indices.begin() + n);
    }
 
-   vector<int>worst_indices(vector<real>& vec, const int& n)
+   // Получаем индексы наименьших элементов матрицы Якоби на удаление
+   vector<int> worst_indices(vector<real>& vec, const int& n)
    {
       vector<int> indices(vec.size());
       iota(indices.begin(), indices.end(), 0);
@@ -98,6 +108,7 @@ public:
       return vector<int>(indices.begin(), indices.begin() + n);
    }
 
+   // Построение матрицы Якоби согласно 1 варианту
    void build_jacobi_1(vector<real>& xs)
    {
       A = test.Jacobi(xs);
@@ -125,6 +136,7 @@ public:
          A.erase(A.begin() + indexes[i]);
    }
 
+   // Построение матрицы Якоби согласно 2 варианту
    void build_jacobi_2(vector<real>& xs)
    {
       A = test.Jacobi(xs);
@@ -142,6 +154,42 @@ public:
          A.erase(A.begin() + indexes[i]);
    }
 
+   // Построение матрицы Якоби согласно 6 варианту
+   void build_jacobi_6(vector<real>& xs)
+   {
+      A.resize(test.n_func());
+    
+      for(int i = 0; i < test.n_func(); i++)
+      {
+         A[i].resize(test.n_var());
+         for(int j = 0; j < test.n_var(); j++)
+         {
+            vector<real> eps(test.n_var());
+            eps[j] = xs[j] + eps0;
+
+            A[i][j] = test.Fk(eps)[i];
+
+            eps[j] = xs[j] - eps0;
+
+            A[i][j] -= test.Fk(eps)[i];
+            A[i][j] /= 2 * eps0;
+         }
+      }
+
+      get_Fk(xs, Fk);
+
+      for(int i = 0; i < test.n_func(); i++)
+         A[i].push_back(-Fk[i]);
+
+      vector<int> indexes = best_indices(Fk, test.n_func() - test.n_var());
+
+      sort(indexes.begin(), indexes.end());
+
+      for(int i = indexes.size() - 1; i >= 0; i--)
+         A.erase(A.begin() + indexes[i]);
+   }
+
+   // Прямой ход решателя методом Гаусса
    void forward_gauss(vector<vector<real>>& mat)
    {
       int n = mat.size() + 1;
@@ -181,6 +229,7 @@ public:
       }
    }
 
+   // Обратный ход решателя методом Гаусса
    void backward_gauss(vector<vector<real>>& mat, vector<real>& res)
    {
       int n = mat.size() + 1;
@@ -198,6 +247,7 @@ public:
       }
    }
 
+   // Функция решения СНУ
    void solve(int var)
    {
       for(int k = 0; k < max_iter_k && norm(Fk) / norm_F0 > eps2; k++)
@@ -216,7 +266,7 @@ public:
          }
          case 6:
          {
-            build_jacobi_2(xk);
+            build_jacobi_6(xk);
             break;
          }
          }
@@ -245,6 +295,7 @@ public:
          }
          xk = xk1;
 
+         // Блок вывода информации о текущей итерации в консоль
          cout << "k:       " << setw(5) << k << endl;
          cout << "beta:    " << setw(5) << beta << endl;
          cout << "xk:      " << setw(5);

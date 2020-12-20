@@ -9,18 +9,10 @@ typedef double real;
 
 int main()
 {
-   //vector<vector<real>> A = { {1,2,5},{0,3,6} };
-   //vector<real> res(2);
-
-   //Newton ns;
-
-   //ns.forward_gauss(A);
-   //ns.backward_gauss(A, res);
-
    Test2_2 test;
    Newton newtonSolver = Newton(test);
    newtonSolver.read_info("tests/info1.txt");
-   newtonSolver.solve(1);
+   newtonSolver.solve(6);
    
    cout << newtonSolver.xk[0] << " " << newtonSolver.xk[1] << endl;
 

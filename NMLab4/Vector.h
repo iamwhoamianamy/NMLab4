@@ -7,9 +7,10 @@ using namespace std;
 typedef double real;
 
 // Умножение вектора на число
-vector<real> operator * (real val, const vector<real>& vec)
+template<class type>
+vector<type> operator * (real val, const vector<type>& vec)
 {
-   vector<real> res(vec.size());
+   vector<type> res(vec.size());
 
    for (size_t i = 0; i < vec.size(); ++i)
       res[i] = val * vec[i];
@@ -17,12 +18,13 @@ vector<real> operator * (real val, const vector<real>& vec)
 }
 
 // Сложение векторов
-vector<real> operator + (const vector<real>& vec1, const vector<real>& vec2)
+template<class type>
+vector<type> operator + (const vector<type>& vec1, const vector<type>& vec2)
 {
    if (vec1.size() != vec2.size())
       throw("a.size() != b.size()");
 
-   vector<real> res(vec1.size());
+   vector<type> res(vec1.size());
 
    for (size_t i = 0; i < vec1.size(); ++i)
       res[i] = vec1[i] + vec2[i];
@@ -30,12 +32,13 @@ vector<real> operator + (const vector<real>& vec1, const vector<real>& vec2)
 }
 
 // Вычитание векторов
-vector<real> operator - (const vector<real>& vec1, const vector<real>& vec2)
+template<class type>
+vector<type> operator - (const vector<type>& vec1, const vector<type>& vec2)
 {
    if (vec1.size() != vec2.size())
      throw("a.size() != b.size()");
 
-   vector<real> res(vec1.size());
+   vector<type> res(vec1.size());
 
    for (size_t i = 0; i < vec1.size(); ++i)
       res[i] = vec1[i] - vec2[i];
@@ -43,7 +46,8 @@ vector<real> operator - (const vector<real>& vec1, const vector<real>& vec2)
 }
 
 // Скалярное произведение векторов
-real operator *(const vector<real>& vec1, const vector<real>& vec2)
+template<class type>
+real operator *(const vector<type>& vec1, const vector<type>& vec2)
 {
    if (vec1.size() != vec2.size())
       throw("vec1.size() != vec2.size()");
@@ -58,7 +62,8 @@ real operator *(const vector<real>& vec1, const vector<real>& vec2)
 }
 
 // Норма вектора
-real norm(const vector<real>& vec)
+template<class type>
+real norm(const vector<type>& vec)
 {
    return sqrt(vec * vec);
 }

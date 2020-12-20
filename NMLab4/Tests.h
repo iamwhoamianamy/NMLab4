@@ -3,6 +3,7 @@
 using namespace std;
 typedef double real;
 
+//  вадрат числа
 real sq(real val)
 {
    return val * val;
@@ -146,7 +147,7 @@ public:
 
    real F2(vector<real>& xs) { return sq(xs[0] + 2) + sq(xs[1] - 2) - 4; }
 
-   real F3(vector<real>& xs) { return xs[0]/* + xs[1] - 2*/; }
+   real F3(vector<real>& xs) { return xs[0] + xs[1] - 2; }
 
    real F1dx(vector<real>& xs) { return 2 * xs[0] - 4; }
 
@@ -158,7 +159,7 @@ public:
 
    real F3dx(vector<real>& xs) { return 1; }
 
-   real F3dy(vector<real>& xs) { return 0; }
+   real F3dy(vector<real>& xs) { return 1; }
 
    vector<vector<real>> Jacobi(vector<real>& xs) { return { { F1dx(xs), F1dy(xs) }, { F2dx(xs), F2dy(xs) }, { F3dx(xs), F3dy(xs) } }; }
 
