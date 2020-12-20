@@ -296,13 +296,16 @@ public:
          xk = xk1;
 
          // Блок вывода информации о текущей итерации в консоль
-         cout << "k:       " << setw(5) << k << endl;
+
+         cout << k << "\t" << beta << "\t" << xk[0] << "\t" << xk[1] << "\t" << norm(Fk) << endl;
+
+         /*cout << "k:       " << setw(5) << k << endl;
          cout << "beta:    " << setw(5) << beta << endl;
          cout << "xk:      " << setw(5);
          for(int i = 0; i < test.n_var(); i++)
             cout << xk[i] << " ";
          cout << endl;
-         cout << "norm Fk: " << setw(5) << norm(Fk) << endl << endl;
+         cout << "norm Fk: " << setw(5) << norm(Fk) << endl << endl;*/
       }
    }
 };
