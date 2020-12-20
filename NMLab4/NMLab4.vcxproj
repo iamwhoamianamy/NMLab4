@@ -141,6 +141,11 @@
   <ItemGroup>
     <ClCompile Include="NMLab4.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Newton.h" />
+    <ClInclude Include="Tests.h" />
+    <ClInclude Include="Vector.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
