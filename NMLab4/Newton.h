@@ -11,7 +11,7 @@ using namespace std;
 class Newton
 {
 public:
-   Test1_3 test;                      // Информация о СНУ
+   Test2_2 test;                      // Информация о СНУ
 
    int max_iter_k;                    // Максимальное число итераций цикла k
    int max_iter_v;                    // Максимальное число итераций цикла v
@@ -30,7 +30,7 @@ public:
                                       // на k-той итерации
 
    // Решаем систему, описанную уравнениями, заданными соответствующими тестами
-   Newton(Test1_3 _test)
+   Newton(Test2_2 _test)
    {
       test = _test;
       A.resize(test.n_func());
@@ -300,7 +300,6 @@ public:
          xk = xk1;
 
          // Блок вывода информации о текущей итерации в консоль(для двумерного случая)
-         
 
          fout << k << "\t" << beta << "\t" << xk[0] << "\t" << xk[1] << "\t" << norm(Fk) << endl;
 

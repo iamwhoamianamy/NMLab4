@@ -9,7 +9,7 @@ typedef double real;
 
 int main()
 {
-   Test1_3 test;
+   Test2_2 test;
    Newton newtonSolver = Newton(test);
 
    newtonSolver.read_info("tests/info1.txt");

@@ -165,3 +165,65 @@ public:
 
    vector<real> Fk(vector<real>& xs) { return { F1(xs), F2(xs), F3(xs) }; }
 };
+
+class Test3_1
+{
+public:
+   virtual int n_func() { return 3; };
+   virtual int n_var() { return 2; };
+
+   Test3_1()
+   {
+
+   }
+
+   real F1(vector<real>& xs) { return xs[0] - 10 * xs[1]; }
+
+   real F2(vector<real>& xs) { return xs[0] + xs[1]; }
+
+   real F3(vector<real>& xs) { return 2000 * xs[0] - 1000 * xs[1] - 5000; }
+
+   real F1dx(vector<real>& xs) { return 1; }
+
+   real F1dy(vector<real>& xs) { return -10; }
+
+   real F2dx(vector<real>& xs) { return 1; }
+
+   real F2dy(vector<real>& xs) { return 1; }
+
+   real F3dx(vector<real>& xs) { return 2000; }
+
+   real F3dy(vector<real>& xs) { return -1000; }
+
+   vector<vector<real>> Jacobi(vector<real>& xs) { return { { F1dx(xs), F1dy(xs) }, { F2dx(xs), F2dy(xs) }, { F3dx(xs), F3dy(xs) } }; }
+
+   vector<real> Fk(vector<real>& xs) { return { F1(xs), F2(xs), F3(xs) }; }
+};
+
+class Test4_1
+{
+public:
+   virtual int n_func() { return 2; };
+   virtual int n_var() { return 2; };
+
+   Test4_1()
+   {
+
+   }
+
+   real F1(vector<real>& xs) { return sin(xs[0]) - xs[1]; }
+
+   real F2(vector<real>& xs) { return 4 * xs[0] - xs[1] - 20; }
+
+   real F1dx(vector<real>& xs) { return cos(xs[0]); }
+
+   real F1dy(vector<real>& xs) { return -1; }
+
+   real F2dx(vector<real>& xs) { return 4; }
+
+   real F2dy(vector<real>& xs) { return -1; }
+
+   vector<vector<real>> Jacobi(vector<real>& xs) { return { { F1dx(xs), F1dy(xs) }, { F2dx(xs), F2dy(xs) } }; }
+
+   vector<real> Fk(vector<real>& xs) { return { F1(xs), F2(xs) }; }
+};

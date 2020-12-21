@@ -7,4 +7,4 @@ max_iter_k:
 max_iter_v:
 100
 x0:
--6 4
+2 5
